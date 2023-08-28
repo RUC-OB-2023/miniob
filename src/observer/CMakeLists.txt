@@ -24,11 +24,13 @@ FOREACH (F ${ALL_SRC})
 
 ENDFOREACH (F)
 
+# set用于设置变量，可以设置多个，用空格分开
 SET(LIBRARIES common pthread dl event_pthreads event jsoncpp)
 
 # 指定目标文件位置
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/../../bin)
 MESSAGE("Binary directory:" ${EXECUTABLE_OUTPUT_PATH})
+# 生成可执行文件，第一个参数是生成文件名，第二个参数是源文件列表
 ADD_EXECUTABLE(${PROJECT_NAME} ${ALL_SRC})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${LIBRARIES})
 
