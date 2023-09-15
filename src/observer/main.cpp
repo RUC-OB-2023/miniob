@@ -180,6 +180,7 @@ int main(int argc, char **argv)
     return rc;
   }
 
+  // 初始化server
   g_server = init_server();
   Server::init();
   g_server->serve();

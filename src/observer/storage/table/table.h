@@ -77,6 +77,15 @@ public:
    */
   RC insert_record(Record &record);
   RC delete_record(const Record &record);
+  // update record
+  /**
+   * @brief 根据传入的record更新数据
+   * @param old_record 原来的record
+   * @param new_record 更新之后的record
+   * @details 先删除old_record，再插入new_record，如果插入时发生键重复的问题，那么删除已经插入的record数据，然后恢复old_record
+   * @note  恢复之后的record和原先的record，rid可能不一样！！！
+  */
+  RC update_record(Record &old_record, Record &new_record);
   RC visit_record(const RID &rid, bool readonly, std::function<void(Record &)> visitor);
   RC get_record(const RID &rid, Record &record);
 

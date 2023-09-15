@@ -2,6 +2,10 @@
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
     "version": "2.0.0",
+    // 临时文件放在build目录下
+    "options": {
+        "cwd": "${workspaceFolder}/build"
+    },
     "tasks": [
         {
             "label": "init",
@@ -27,6 +31,29 @@
             "label": "gen_parser",
             "type": "shell",
             "command": "cd ${workspaceFolder}/src/observer/sql/parser && bash gen_parser.sh"
+        },
+        {
+            "label": "cmake",
+            "command": "cmake",
+            "args": [
+                "-DDEBUG=ON",
+                ".."
+            ]
+        },
+        {
+            "label": "make",
+            "command": "make",
+            "args": [
+                "-j",
+                "4"
+            ]
+        },
+        {
+            "label": "CMake Build",
+            "dependsOn": [
+                "cmake",
+                "make"
+            ]
         }
     ]
 }

@@ -33,6 +33,7 @@ using namespace common;
 
 RC OptimizeStage::handle_request(SQLStageEvent *sql_event)
 {
+  // 1. 生成逻辑计划
   unique_ptr<LogicalOperator> logical_operator;
   RC rc = create_logical_plan(sql_event, logical_operator);
   if (rc != RC::SUCCESS) {
@@ -41,19 +42,19 @@ RC OptimizeStage::handle_request(SQLStageEvent *sql_event)
     }
     return rc;
   }
-
+  // 2. 重写逻辑计划（优化）
   rc = rewrite(logical_operator);
   if (rc != RC::SUCCESS) {
     LOG_WARN("failed to rewrite plan. rc=%s", strrc(rc));
     return rc;
   }
-
+  // 3. 优化逻辑计划
   rc = optimize(logical_operator);
   if (rc != RC::SUCCESS) {
     LOG_WARN("failed to optimize plan. rc=%s", strrc(rc));
     return rc;
   }
-
+  // 4. 生成物理执行计划
   unique_ptr<PhysicalOperator> physical_operator;
   rc = generate_physical_plan(logical_operator, physical_operator);
   if (rc != RC::SUCCESS) {
@@ -87,6 +88,7 @@ RC OptimizeStage::rewrite(unique_ptr<LogicalOperator> &logical_operator)
 {
   RC rc = RC::SUCCESS;
   
+  // 一直重写，直到没有可以重写的逻辑
   bool change_made = false;
   do {
     change_made = false;

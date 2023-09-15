@@ -293,8 +293,8 @@ RC Table::make_record(int value_num, const Value *values, Record &record)
     size_t copy_len = field->len();
     if (field->type() == CHARS) {
       const size_t data_len = value.length();
-      if (copy_len > data_len) {
-        copy_len = data_len + 1;
+      if (copy_len > data_len) {  // 防止memcpy的时候，value+copy_len溢出
+        copy_len = data_len + 1;  
       }
     }
     memcpy(record_data + field->offset(), value.data(), copy_len);
@@ -303,6 +303,9 @@ RC Table::make_record(int value_num, const Value *values, Record &record)
   record.set_data_owner(record_data, record_size);
   return RC::SUCCESS;
 }
+
+
+
 
 RC Table::init_record_handler(const char *base_dir)
 {
@@ -443,6 +446,29 @@ RC Table::delete_record(const Record &record)
   rc = record_handler_->delete_record(&record.rid());
   return rc;
 }
+
+// update
+RC Table::update_record(Record &old_record, Record &new_record) 
+{
+  RC rc = RC::SUCCESS;
+  
+  // 1. 先删除原有的record
+  rc = delete_record(old_record);
+  if(rc != RC::SUCCESS) {
+    // TODO: LOG WRAN
+    return rc;
+  }
+
+  // 2. 插入新的record
+  rc = insert_record(new_record);
+    // 插入失败，发生键的重复，需要将old_record插入回去
+  if(rc != RC::SUCCESS) {
+    insert_record(old_record);
+  }
+
+  return rc;
+}
+
 
 RC Table::insert_entry_of_indexes(const char *record, const RID &rid)
 {

@@ -185,6 +185,12 @@ RC MvccTrx::delete_record(Table * table, Record &record)
   return RC::SUCCESS;
 }
 
+// TODO: mvcc update
+RC MvccTrx::update_record(Table *table, Record &old_record, Record &new_record)
+{
+  return RC::SUCCESS;
+}
+
 RC MvccTrx::visit_record(Table *table, Record &record, bool readonly)
 {
   Field begin_field;
