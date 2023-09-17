@@ -120,6 +120,29 @@ RC Table::create(
   return rc;
 }
 
+RC Table::drop(){
+   // 删除缓冲区
+    std::string data_file = table_data_file(base_dir_.c_str(),table_meta_.name());
+    BufferPoolManager &bpm = BufferPoolManager::instance();
+    bpm.drop_file(data_file.c_str());
+    // 删除索引文件 
+    
+    // TODO
+    // for (auto &index : indexes_) {
+    //     index->drop();
+    // }
+
+    // 删除元数据文件 
+    std::string meta_file = table_meta_file(base_dir_.c_str(),table_meta_.name());
+    if (::remove(meta_file.c_str()) != 0) {
+        LOG_ERROR("Failed to remove meta file. file name=%s, errmsg=%s", meta_file.c_str(), strerror(errno));
+        return RC::IOERR;
+    }
+
+    return RC::SUCCESS;
+
+}
+
 RC Table::open(const char *meta_file, const char *base_dir, CLogManager *clog_manager)
 {
   // 加载元数据文件
