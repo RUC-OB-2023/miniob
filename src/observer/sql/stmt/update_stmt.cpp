@@ -46,6 +46,7 @@ RC UpdateStmt::create(Db *db, const UpdateSqlNode &update, Stmt *&stmt)
   const FieldMeta *field_meta = table_meta.field(field_name);
   if(nullptr == field_meta) {
     LOG_WARN("field name not found. field name=%s", field_name);
+    return RC::SCHEMA_FIELD_NOT_EXIST;
   }
 
   // 4. 检查列的类型是否匹配
